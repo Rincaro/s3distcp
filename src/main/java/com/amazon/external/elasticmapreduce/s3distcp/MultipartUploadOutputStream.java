@@ -74,7 +74,7 @@
 /*     */ 
 /*  89 */     this.threadPool = threadPool;
 /*  90 */     this.progressable = progressable;
-/*  91 */     this.futures = new ArrayList();
+/*  91 */     this.futures = new ArrayList<>();
 /*     */ 
 /*  93 */     this.tempDirs = tempDirs;
 /*  94 */     this.bucketName = bucketName;
@@ -85,12 +85,12 @@
 /*  99 */     setTempFileAndOutput();
 /*     */   }
 /*     */ 
-/*     */   public void write(byte[] b) throws IOException
+/*     */   @Override public void write(byte[] b) throws IOException
 /*     */   {
 /* 104 */     write(b, 0, b.length);
 /*     */   }
 /*     */ 
-/*     */   public void write(byte[] b, int off, int len) throws IOException
+/*     */   @Override public void write(byte[] b, int off, int len) throws IOException
 /*     */   {
 /* 109 */     long capacityLeft = capacityLeft();
 /* 110 */     int offset = off;
@@ -108,7 +108,7 @@
 /* 123 */     this.currentPartSize += length;
 /*     */   }
 /*     */ 
-/*     */   public void write(int b) throws IOException
+/*     */   @Override public void write(int b) throws IOException
 /*     */   {
 /* 128 */     if (capacityLeft() < 1L) {
 /* 129 */       kickOffUpload();
@@ -117,11 +117,11 @@
 /* 132 */     this.currentPartSize += 1L;
 /*     */   }
 /*     */ 
-/*     */   public void flush()
+/*     */   @Override public void flush()
 /*     */   {
 /*     */   }
 /*     */ 
-/*     */   public void close()
+/*     */   @Override public void close()
 /*     */   {
 /*     */     try
 /*     */     {
@@ -139,8 +139,8 @@
 /* 157 */         Thread.sleep(1000L);
 /*     */       }
 /*     */ 
-/* 160 */       List etags = new ArrayList();
-/* 161 */       for (Future future : this.futures) {
+/* 160 */       List<PartETag> etags = new ArrayList<>();
+/* 161 */       for (Future<PartETag> future : this.futures) {
 /* 162 */         etags.add(future.get());
 /*     */       }
 /* 164 */       LOG.debug("About to close multipart upload " + this.uploadId + " with bucket '" + this.bucketName + "' key '" + this.key + "' and etags '" + etags + "'");
@@ -152,7 +152,7 @@
 /*     */     }
 /*     */   }
 /*     */ 
-/*     */   public void abort()
+/*     */   @Override public void abort()
 /*     */   {
 /* 175 */     for (Future future : this.futures) {
 /* 176 */       future.cancel(true);
@@ -192,7 +192,7 @@
 /* 212 */       this.partFile = partFile;
 /* 213 */       this.md5sum = md5sum; }
 /*     */ 
-/*     */     public PartETag call()
+/*     */     @Override public PartETag call()
 /*     */       throws Exception
 /*     */     {
 /* 218 */       InputStream is = new ProgressableResettableBufferedFileInputStream(this.partFile, MultipartUploadOutputStream.this.progressable);
